@@ -13,7 +13,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.cookbooks_path = ["cookbooks", "site-cookbooks"]
     chef.add_recipe "apt"
     chef.add_recipe "nodejs"
-    chef.add_recipe "app::rbenv"
+    chef.add_recipe "ruby_build"
+    chef.add_recipe "ruby_rbenv::user"
     chef.add_recipe "app::postgres"
     chef.add_recipe "app::setup"
 
@@ -29,6 +30,32 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         password: {
           postgres: "iloverandompasswordsbutthiswilldo"
         }
+      },
+      rbenv: {
+        user_installs: [
+          {
+            user: 'vagrant',
+            rubies: ['2.2.3'],
+            global: '2.2.3',
+            gems: {
+              '2.2.3' => [
+                { name: 'bundler' },
+                { name: 'rake' }
+              ]
+            },
+            plugins: [
+              {
+                name: "rbenv-vars",
+                git_url: 'git://github.com/sstephenson/rbenv-vars.git'
+              },
+              {
+                name: 'rbenv-update',
+                git_url: 'git://github.com/rkh/rbenv-update.git',
+                revision: 'master'
+              }
+            ]
+          }
+        ]
       }
     }
   end
